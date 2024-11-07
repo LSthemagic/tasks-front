@@ -123,3 +123,104 @@ li button:hover {
     width: 90%;
   }
 }
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  text-align: center;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  color: #333;
+}
+
+.loader {
+  display: flex;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.task-form input {
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.submit-button {
+  padding: 10px;
+  background-color: #285ad7;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.submit-button:hover {
+  background-color: #191bae;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+}
+
+.task-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+  font-size: 16px;
+}
+
+.task-item .task-name {
+  font-weight: bold;
+}
+
+.high-cost {
+  background-color: #ffe5e5;
+}
+
+.edit-button, .delete-button, .move-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 18px;
+}
+
+.edit-button:hover {
+  color: #3b82f6;
+}
+
+.delete-button:hover {
+  color: #ef4444;
+}
+
+.move-button:hover {
+  color: #10b981;
+}
+
+.add-task-button {
+  padding: 10px 20px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.add-task-button:hover {
+  background-color: #1d4ed8;
+}

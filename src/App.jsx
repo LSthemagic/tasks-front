@@ -127,10 +127,11 @@ const App = () => {
   };
 
   return (
-    <div>
+    <div className="container">
       <h1>Lista de Tarefas</h1>
-      {loading && <SyncLoader/>}
-      <form onSubmit={handleSubmit}>
+      {loading && <div className="loader"><SyncLoader /></div>}
+      
+      <form onSubmit={handleSubmit} className="task-form">
         <input
           type="text"
           placeholder="Nome da Tarefa"
@@ -152,23 +153,31 @@ const App = () => {
           onChange={(e) => setTaskTimeout(e.target.value)}
           required
         />
-        <button type="submit">{editTaskId ? "Atualizar Tarefa" : "Adicionar Tarefa"}</button>
+        <button type="submit" className="submit-button">
+          {editTaskId ? "Atualizar Tarefa" : "Adicionar Tarefa"}
+        </button>
       </form>
-      <ul>
+
+      <ul className="task-list">
         {tasks.map((task) => (
           <li
             key={task.task_id}
-            className={task.task_cost >= 1000 ? "high-cost" : ""}
+            className={`task-item ${task.task_cost >= 1000 ? "high-cost" : ""}`}
           >
-            <span>{task.task_name}</span> - <span>R${task.task_cost}</span> - <span>{task.task_timeout}</span>
-            <button onClick={() => handleEdit(task)}>✏️</button>
-            <button onClick={() => deleteTask(task.task_id)}>🗑️</button>
-            <button onClick={() => moveTask(task.task_id, 'up')}>⬆️</button>
-            <button onClick={() => moveTask(task.task_id, 'down')}>⬇️</button>
+            <span className="task-name">{task.task_name}</span> - 
+            <span className="task-cost">R${task.task_cost}</span> - 
+            <span className="task-timeout">{task.task_timeout}</span>
+            <button onClick={() => handleEdit(task)} className="edit-button">✏️</button>
+            <button onClick={() => deleteTask(task.task_id)} className="delete-button">🗑️</button>
+            <button onClick={() => moveTask(task.task_id, 'up')} className="move-button">⬆️</button>
+            <button onClick={() => moveTask(task.task_id, 'down')} className="move-button">⬇️</button>
           </li>
         ))}
       </ul>
-      <button onClick={() => { setEditTaskId(null); setTaskName(''); setTaskCost(''); setTaskTimeout(''); }}>Incluir Nova Tarefa</button>
+
+      <button onClick={() => { setEditTaskId(null); setTaskName(''); setTaskCost(''); setTaskTimeout(''); }} className="add-task-button">
+        Incluir Nova Tarefa
+      </button>
     </div>
   );
 };
