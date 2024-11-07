@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import './App.css';
+import SyncLoader from 'react-spinners/SyncLoader';
 
 const App = () => {
   const [tasks, setTasks] = useState([]);
@@ -128,7 +129,7 @@ const App = () => {
   return (
     <div>
       <h1>Lista de Tarefas</h1>
-      {loading && <p>Carregando...</p>}
+      {loading && <SyncLoader/>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
