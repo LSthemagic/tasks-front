@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/tasks': 'http://localhost:8090'
+      '/tasks': 'https://tasks-server-2rby.onrender.com'
     }
   }
 });
