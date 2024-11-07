@@ -15,7 +15,7 @@ const App = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await axios.get('/tasks');
+      const response = await axios.get('https://tasks-server-2rby.onrender.com/tasks');
       if (Array.isArray(response.data)) {
         const orderedTasks = response.data.sort((a, b) => a.presentation_order - b.presentation_order);
         setTasks(orderedTasks);
@@ -35,7 +35,7 @@ const App = () => {
       return;
     }
     try {
-      await axios.post('/tasks', {
+      await axios.post('https://tasks-server-2rby.onrender.com/tasks', {
         task_name: taskName,
         task_cost: taskCost,
         task_timeout: taskTimeout,
@@ -57,7 +57,7 @@ const App = () => {
       return;
     }
     try {
-      await axios.put(`/tasks/${editTaskId}`, {
+      await axios.put(`https://tasks-server-2rby.onrender.com/tasks/${editTaskId}`, {
         task_name: taskName,
         task_cost: taskCost,
         task_timeout: taskTimeout
@@ -75,7 +75,7 @@ const App = () => {
   const deleteTask = async (taskId) => {
     if (window.confirm("Tem certeza que deseja excluir esta tarefa?")) {
       try {
-        await axios.delete(`/tasks/${taskId}`);
+        await axios.delete(`https://tasks-server-2rby.onrender.com/tasks/${taskId}`);
         fetchTasks();
       } catch (error) {
         console.error("Erro ao deletar tarefa", error);
@@ -111,7 +111,7 @@ const App = () => {
     const reorderedTaskIds = updatedTasks.map(task => ({ tasks_id: task.task_id }));
 
     try {
-        await axios.put('/tasks/reorder', reorderedTaskIds);
+        await f.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
         fetchTasks();
     } catch (error) {
         console.error("Erro ao reordenar tarefas", error);
