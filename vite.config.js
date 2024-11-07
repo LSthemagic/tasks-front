@@ -5,7 +5,11 @@ export default defineConfig({
   plugins: [react()],
   server: {
     proxy: {
-      '/tasks': 'https://tasks-server-2rby.onrender.com'
+      '/tasks': {
+        target: 'https://tasks-server-2rby.onrender.com',
+        changeOrigin: true,
+        secure: false
+      }
     }
   }
 });

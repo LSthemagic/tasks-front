@@ -16,13 +16,17 @@ const App = () => {
   const fetchTasks = async () => {
     try {
       const response = await axios.get('/tasks');
-      // Ordena as tarefas pela ordem de apresentação
-      const orderedTasks = response.data.sort((a, b) => a.presentation_order - b.presentation_order);
-      setTasks(orderedTasks);
+      if (Array.isArray(response.data)) {
+        const orderedTasks = response.data.sort((a, b) => a.presentation_order - b.presentation_order);
+        setTasks(orderedTasks);
+      } else {
+        console.error("A resposta não é um array:", response.data);
+      }
     } catch (error) {
       console.error("Erro ao buscar tarefas", error);
     }
   };
+  
 
   const createTask = async () => {
     // Verifica se o nome já existe
