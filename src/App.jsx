@@ -8,12 +8,14 @@ const App = () => {
   const [taskCost, setTaskCost] = useState('');
   const [taskTimeout, setTaskTimeout] = useState('');
   const [editTaskId, setEditTaskId] = useState(null);
+  const [loading, setLoading] = useState(false); // Estado para o loading
 
   useEffect(() => {
     fetchTasks();
   }, []);
 
   const fetchTasks = async () => {
+    setLoading(true); // Ativa o loading
     try {
       const response = await axios.get('https://tasks-server-2rby.onrender.com/tasks');
       if (Array.isArray(response.data)) {
@@ -25,21 +27,20 @@ const App = () => {
     } catch (error) {
       console.error("Erro ao buscar tarefas", error);
     }
+    setLoading(false); // Desativa o loading
   };
   
-
   const createTask = async () => {
-    // Verifica se o nome já existe
     if (tasks.some(task => task.task_name === taskName)) {
       alert("Nome da tarefa já existe!");
       return;
     }
+    setLoading(true);
     try {
       await axios.post('https://tasks-server-2rby.onrender.com/tasks', {
         task_name: taskName,
         task_cost: taskCost,
         task_timeout: taskTimeout,
-        // Define a ordem de apresentação como o último item da lista
         presentation_order: tasks.length + 1
       });
       setTaskName('');
@@ -49,6 +50,7 @@ const App = () => {
     } catch (error) {
       console.error("Erro ao criar tarefa", error);
     }
+    setLoading(false);
   };
 
   const updateTask = async () => {
@@ -56,6 +58,7 @@ const App = () => {
       alert("Nome da tarefa já existe!");
       return;
     }
+    setLoading(true);
     try {
       await axios.put(`https://tasks-server-2rby.onrender.com/tasks/${editTaskId}`, {
         task_name: taskName,
@@ -70,17 +73,40 @@ const App = () => {
     } catch (error) {
       console.error("Erro ao atualizar tarefa", error);
     }
+    setLoading(false);
   };
 
   const deleteTask = async (taskId) => {
     if (window.confirm("Tem certeza que deseja excluir esta tarefa?")) {
+      setLoading(true);
       try {
         await axios.delete(`https://tasks-server-2rby.onrender.com/tasks/${taskId}`);
         fetchTasks();
       } catch (error) {
         console.error("Erro ao deletar tarefa", error);
       }
+      setLoading(false);
     }
+  };
+
+  const moveTask = async (taskId, direction) => {
+    const index = tasks.findIndex(task => task.task_id === taskId);
+    if ((index === 0 && direction === 'up') || (index === tasks.length - 1 && direction === 'down')) return;
+
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const updatedTasks = [...tasks];
+    [updatedTasks[index], updatedTasks[targetIndex]] = [updatedTasks[targetIndex], updatedTasks[index]];
+
+    const reorderedTaskIds = updatedTasks.map(task => ({ tasks_id: task.task_id }));
+
+    setLoading(true);
+    try {
+        await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
+        fetchTasks();
+    } catch (error) {
+        console.error("Erro ao reordenar tarefas", error.response?.data || error.message);
+    }
+    setLoading(false);
   };
 
   const handleSubmit = (e) => {
@@ -99,33 +125,10 @@ const App = () => {
     setEditTaskId(task.task_id);
   };
 
-  const moveTask = async (taskId, direction) => {
-    const index = tasks.findIndex(task => task.task_id === taskId);
-
-    if ((index === 0 && direction === 'up') || (index === tasks.length - 1 && direction === 'down')) return;
-
-    const targetIndex = direction === 'up' ? index - 1 : index + 1;
-    const updatedTasks = [...tasks];
-    [updatedTasks[index], updatedTasks[targetIndex]] = [updatedTasks[targetIndex], updatedTasks[index]];
-
-    // Mapeia os IDs das tarefas com o nome do campo esperado pelo backend
-    const reorderedTaskIds = updatedTasks.map(task => ({ tasks_id: task.task_id }));
-
-    console.log("Reordered tasks payload:", reorderedTaskIds);
-
-    try {
-        await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
-        fetchTasks();
-    } catch (error) {
-        console.error("Erro ao reordenar tarefas", error.response?.data || error.message);
-    }
-};
-
-
-
   return (
     <div>
       <h1>Lista de Tarefas</h1>
+      {loading && <p>Carregando...</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
