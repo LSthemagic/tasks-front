@@ -100,21 +100,36 @@ const App = () => {
   };
 
   const moveTask = async (taskId, direction) => {
+    // Encontra o índice da tarefa a ser movida
     const index = tasks.findIndex(task => task.task_id === taskId);
+
+    // Verifica se a tarefa está no início ou no final da lista e evita o movimento inválido
     if ((index === 0 && direction === 'up') || (index === tasks.length - 1 && direction === 'down')) return;
 
+    // Calcula o índice de destino para a troca de posição
     const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    
+    // Cria uma cópia da lista de tarefas para atualizar as posições localmente
     const updatedTasks = [...tasks];
+    
+    // Realiza a troca de posições
     [updatedTasks[index], updatedTasks[targetIndex]] = [updatedTasks[targetIndex], updatedTasks[index]];
 
-    // Mapeia os IDs das tarefas para o formato esperado pela API
-    const reorderedTaskIds = updatedTasks.map(task => ({ tasks_id: task.task_id }));
+    // Mapeia os IDs das tarefas no formato esperado pela API (ajuste conforme necessário)
+    const reorderedTaskIds = updatedTasks.map(task => ({ task_id: task.task_id }));
+
+    // Adiciona um log para verificar o payload que está sendo enviado
+    console.log("Reordered tasks payload:", reorderedTaskIds);
 
     try {
-        await f.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
+        // Envia a requisição PUT para o backend
+        await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', { tasks: reorderedTaskIds });
+        
+        // Recarrega as tarefas para refletir a nova ordem
         fetchTasks();
     } catch (error) {
-        console.error("Erro ao reordenar tarefas", error);
+        // Log do erro com detalhes da resposta para auxiliar na depuração
+        console.error("Erro ao reordenar tarefas", error.response?.data || error.message);
     }
 };
 
