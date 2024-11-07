@@ -100,49 +100,26 @@ const App = () => {
   };
 
   const moveTask = async (taskId, direction) => {
-    // Encontra o índice da tarefa a ser movida
-      const index = tasks.findIndex(task => task.task_id === taskId);
+    const index = tasks.findIndex(task => task.task_id === taskId);
 
-      // Verifica se a tarefa está no início ou no final da lista e evita o movimento inválido
-      if ((index === 0 && direction === 'up') || (index === tasks.length - 1 && direction === 'down')) return;
+    if ((index === 0 && direction === 'up') || (index === tasks.length - 1 && direction === 'down')) return;
 
-      // Calcula o índice de destino para a troca de posição
-      const targetIndex = direction === 'up' ? index - 1 : index + 1;
-      
-      // Cria uma cópia da lista de tarefas para atualizar as posições localmente
-      const updatedTasks = [...tasks];
-      
-      // Realiza a troca de posições
-      [updatedTasks[index], updatedTasks[targetIndex]] = [updatedTasks[targetIndex], updatedTasks[index]];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+    const updatedTasks = [...tasks];
+    [updatedTasks[index], updatedTasks[targetIndex]] = [updatedTasks[targetIndex], updatedTasks[index]];
 
-      // Mapeia os IDs das tarefas em um array simples e verifica a validade de cada ID
-      const reorderedTaskIds = updatedTasks.map(task => {
-          if (!task.task_id) {
-              console.error("Erro: ID da tarefa é null ou undefined:", task);
-          }
-          return { task_id: task.task_id };
-      });
+    // Mapeia os IDs das tarefas com o nome do campo esperado pelo backend
+    const reorderedTaskIds = updatedTasks.map(task => ({ tasks_id: task.task_id }));
 
-      // Verifica se todos os IDs são válidos antes de prosseguir
-      if (reorderedTaskIds.some(task => !task.task_id)) {
-          console.error("Erro: Existem IDs de tarefas nulos ou indefinidos.");
-          return;
-      }
+    console.log("Reordered tasks payload:", reorderedTaskIds);
 
-      // Log do payload para confirmar o que será enviado
-      console.log("Reordered tasks payload:", reorderedTaskIds);
-
-      try {
-          // Envia a requisição PUT para o backend com o array diretamente
-          await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
-          
-          // Recarrega as tarefas para refletir a nova ordem
-          fetchTasks();
-      } catch (error) {
-          // Log do erro com detalhes da resposta para auxiliar na depuração
-          console.error("Erro ao reordenar tarefas", error.response?.data || error.message);
-      }
-  };
+    try {
+        await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
+        fetchTasks();
+    } catch (error) {
+        console.error("Erro ao reordenar tarefas", error.response?.data || error.message);
+    }
+};
 
 
 
