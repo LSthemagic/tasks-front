@@ -115,15 +115,15 @@ const App = () => {
     // Realiza a troca de posições
     [updatedTasks[index], updatedTasks[targetIndex]] = [updatedTasks[targetIndex], updatedTasks[index]];
 
-    // Mapeia os IDs das tarefas no formato esperado pela API (ajuste conforme necessário)
+    // Mapeia os IDs das tarefas em um array simples, sem o objeto extra
     const reorderedTaskIds = updatedTasks.map(task => ({ task_id: task.task_id }));
 
     // Adiciona um log para verificar o payload que está sendo enviado
     console.log("Reordered tasks payload:", reorderedTaskIds);
 
     try {
-        // Envia a requisição PUT para o backend
-        await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', { tasks: reorderedTaskIds });
+        // Envia a requisição PUT para o backend com o array diretamente
+        await axios.put('https://tasks-server-2rby.onrender.com/tasks/reorder', reorderedTaskIds);
         
         // Recarrega as tarefas para refletir a nova ordem
         fetchTasks();
@@ -132,6 +132,7 @@ const App = () => {
         console.error("Erro ao reordenar tarefas", error.response?.data || error.message);
     }
 };
+
 
 
   return (
